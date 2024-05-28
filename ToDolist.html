@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do-List</title>
+</head>
+<style>
+    body{
+        height: 100%;
+        width: auto;
+        display: flex;
+        flex-direction:column;
+        align-items: center;
+        background-color: black;
+        margin-top: 150px;
+    }
+    .heading1{
+        color: white;
+        /* font-size: 25px; */
+        font-weight: 700;
+        /* position: absolute;
+           left: 50%;
+           top: 50%;
+           transform: translate(-50%,-50%);
+           translate: 0px -130px; */
+    }
+    /* .inputfield{
+           position: absolute;
+           left: 50%;
+           top: 50%;
+           transform: translate(-50%,-50%);
+           translate: 0px -40px;
+      } */
+    #inputValue{
+            width: 250px;
+            height: 40px;
+            border-radius: 10px;
+            margin-right: 10px;
+            font-weight: 500;
+            font-size: 25px;
+           }
+    .btn{
+        background-color: goldenrod;
+        width: 105px;
+        height: 50px;
+        border-radius:25px;
+        border: transparent;
+        font-weight: 500;
+        
+    } 
+    .btn:hover{
+        background-color: black;
+        border: 0.3px solid goldenrod;
+        color: white;
+        transition-property: color,background-color ;
+        transition-duration: 0.5s;
+    }
+    /* .todo-lists-elements{
+           position: absolute;
+           left: 50%;
+           top: 50%;
+           transform: translate(-50%,-50%);
+           translate: 0px -40px;
+    } */
+    .main_todo_list{
+        display: grid;
+        grid-template-columns: repeat(2,2fr);
+        list-style-type: circle;
+        color: white;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        align-items: center;
+        height: auto;
+        gap: 155px;
+    }
+    li{
+        font-size: 20px;
+        text-transform: capitalize;
+    }
+    .deleteBtn{
+        background-color: goldenrod;
+        width: 105px;
+        height: 50px;
+        border-radius:25px;
+        border: transparent;
+        font-weight: 500;
+    }
+    .deleteBtn:hover{
+        background-color: black;
+        border: 0.3px solid goldenrod;
+        color: white;
+        transition-property: color,background-color;
+        transition-duration: 0.5s;
+    }
+</style>
+<body>
+    <h1 class="heading1">Todo List</h1>
+    <br>
+    <form>
+        <div class="inputfield">
+            <input type="text" id="inputValue"/>
+            <button class="btn">Add Todo</button>
+        </div>
+        <section class="todo-lists-elements">
+
+        </section>
+    </form>
+    <script>
+        const inputValue = document.getElementById("inputValue");
+        const todoListItem = document.querySelector(".todo-lists-elements");
+        const getTodoListfromlocal =()=>{
+             return JSON.parse(localStorage.getItem("YtTodoList"));
+        }
+        const addTodoDynamicElement = (currElem)=>{
+            const divElement = document.createElement("div");
+            divElement.classList.add("main_todo_list");
+            divElement.innerHTML=`<li>${currElem}</li> <button class="deleteBtn"> Delete</Button>`;
+            todoListItem.append(divElement);
+
+            divElement.querySelector(".deleteBtn").addEventListener("click", () => {
+                deleteTodoItem(currElem, divElement);
+            });
+
+        };
+        const deleteTodoItem=(item,element)=>{
+            localTodoList = localTodoList.filter(searcher => searcher !== item);
+            localStorage.setItem("YtTodoList",JSON.stringify(localTodoList));//if we can't modify the local storage then changes will not store and hence on refreshing came back..
+            element.remove();
+        }
+        let localTodoList = getTodoListfromlocal() || [];
+        const ShowTodoList = ()=>{
+            localTodoList.forEach((currElem) => {
+                addTodoDynamicElement(currElem);
+            });
+        };
+        const addTodoList=(e)=>{
+            e.preventDefault();
+            const TodoListValue = inputValue.value.trim();
+            if(TodoListValue != "" && (! localTodoList.includes(TodoListValue))){
+            localTodoList.push(TodoListValue);
+            localTodoList = [...new Set(localTodoList)];
+            console.log(localTodoList);
+            localStorage.setItem("YtTodoList",JSON.stringify(localTodoList)); 
+            addTodoDynamicElement(TodoListValue);
+            inputValue.value = ''
+            }
+            else{
+                window.alert("Entered Todo Item is either empty or already exist!");
+            }
+        };
+        ShowTodoList();
+        document.querySelector(".btn").addEventListener("click",(e)=>{
+            addTodoList(e);
+        });
+    </script>
+</body>
+</html>
